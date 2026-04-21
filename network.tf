@@ -5,7 +5,7 @@ resource "azurerm_virtual_network" "vnet1" {
   resource_group_name = local.resource_group_name
 
   tags = {
-    name = "jnkns"
+    name = "Jenkins"
   }
   depends_on = [ azurerm_resource_group.RG ]
 }
@@ -27,17 +27,31 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnetA.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.publicip.id
   }
   depends_on = [ azurerm_subnet.subnetA ]
 }
 
+resource "azurerm_public_ip" "publicip" {
+  name                = "Jenkins_publicip"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  allocation_method   = "Static"
+
+  tags = {
+    environment = "Production"
+  }
+  depends_on = [ azurerm_resource_group.RG ]
+}
+
+
 resource "azurerm_network_security_group" "jenkins_SG" {
-  name                = "jenkins-sg"
+  name                = "Jenkins-SG"
   location            = local.location
   resource_group_name = local.resource_group_name
 
   security_rule {
-    name                       = "jenkinssg"
+    name                       = "RDPRule"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -49,8 +63,8 @@ resource "azurerm_network_security_group" "jenkins_SG" {
   }
 
    security_rule {
-    name                       = "jenkinsport"
-    priority                   = 100
+    name                       = "Jenkinsport"
+    priority                   = 101
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -62,7 +76,7 @@ resource "azurerm_network_security_group" "jenkins_SG" {
 
    security_rule {
     name                       = "AllowSSH"
-    priority                   = 100
+    priority                   = 102
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"

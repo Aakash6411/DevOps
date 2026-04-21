@@ -5,6 +5,8 @@ resource "azurerm_managed_disk" "jenkinsdisk" {
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = 10
+
+  depends_on = [ azurerm_resource_group.RG ]
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "jenkins-vm" {
