@@ -24,7 +24,7 @@ resource "azurerm_windows_virtual_machine" "Jenkins" {
   name                = "jenkins-vm"
   resource_group_name = local.resource_group_name
   location            = local.location
-  size                = "Standard_B2ats_v2"
+  size                = "Standard_D2ls_v5"
   admin_username      = "adminuser"
   admin_password      = "Jenkinstest@98"
   network_interface_ids = [
